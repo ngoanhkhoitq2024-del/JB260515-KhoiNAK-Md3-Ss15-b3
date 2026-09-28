@@ -37,11 +37,18 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/products").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/products").hasAnyRole("ADMIN", "STAFF")
-                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyRole("ADMIN", "STAFF")
-                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyRole("ADMIN", "STAFF")
-                        .anyRequest().authenticated()
+                        // CUSTOMER đặt hàng
+                        .requestMatchers(HttpMethod.POST, "/api/orders")
+                        .hasRole("CUSTOMER")
+                        // CUSTOMER xem lịch sử
+                        .requestMatchers(HttpMethod.GET, "/api/orders/my")
+                        .hasRole("CUSTOMER")
+                        // STAFF + ADMIN xem tất cả đơn
+                        .requestMatchers(HttpMethod.GET, "/api/orders")
+                        .hasAnyRole("STAFF", "ADMIN")
+                        // STAFF cập nhật trạng thái
+                        .requestMatchers(HttpMethod.PUT, "/api/orders/*/status")
+                        .hasRole("STAFF") .anyRequest().authenticated()
                 )
                 .addFilterBefore(
                         jwtAuthenticationFilter,

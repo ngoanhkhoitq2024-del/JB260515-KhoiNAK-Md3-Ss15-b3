@@ -32,7 +32,7 @@ public class AuthService {
                 .phone(request.getPhone())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role("ROLE_USER")
+                .role("ROLE_CUSTOMER")
                 .build();
         userRepository.save(user);
     }
